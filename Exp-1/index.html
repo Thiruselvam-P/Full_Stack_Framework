@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShopEasy</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <h1>ShopEasy</h1>
+    </header>
+
+    <section class="products">
+      <h2>Our Products</h2>
+      <div class="product-list" id="product-list"></div>
+    </section>
+
+    <footer>
+      <p>© 2025 ShopEasy. All rights reserved.</p>
+    </footer>
+
+    <script>
+      fetch("/api/products")
+        .then((res) => res.json())
+        .then((data) => {
+          const productList = document.getElementById("product-list");
+          productList.innerHTML = data
+            .map(
+              (product) => `
+          <div class="card">
+            <img src="${product.image}" alt="${product.name}">
+            <h3>${product.name}</h3>
+            <p>${product.description}</p>
+            <strong>₹${product.price}</strong><br>
+            <button>Add to Cart</button>
+          </div>
+        `
+            )
+            .join("");
+        });
+    </script>
+  </body>
+</html>
