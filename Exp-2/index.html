@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Student Certificate</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Student Certificate Generator</h1>
+
+    <!-- Step 1: Name and Class -->
+    <form id="student-form-step1">
+      <h2>Student Details</h2>
+      <input type="text" id="name" placeholder="Name" required /><br />
+      <input type="text" id="class" placeholder="Class" required /><br /><br />
+      <button type="submit">Next</button>
+    </form>
+
+    <!-- Step 2: Marks (hidden initially) -->
+    <form id="student-form-step2" style="display: none">
+      <h2>Marks</h2>
+      <input type="number" id="tamil" placeholder="Tamil" required /><br />
+      <input type="number" id="english" placeholder="English" required /><br />
+      <input type="number" id="maths" placeholder="Maths" required /><br />
+      <input type="number" id="science" placeholder="Science" required /><br />
+      <input
+        type="number"
+        id="social"
+        placeholder="Social"
+        required
+      /><br /><br />
+      <button type="submit">Generate Certificate</button>
+    </form>
+
+    <div id="result" style="display: none">
+      <h2>Result</h2>
+      <p id="output"></p>
+    </div>
+
+    <script>
+      // Store name and class between steps
+      let studentName = "";
+      let studentClass = "";
+
+      const formStep1 = document.getElementById("student-form-step1");
+      const formStep2 = document.getElementById("student-form-step2");
+      const output = document.getElementById("output");
+      const resultDiv = document.getElementById("result");
+
+      formStep1.onsubmit = (e) => {
+        e.preventDefault();
+        studentName = document.getElementById("name").value;
+        studentClass = document.getElementById("class").value;
+        formStep1.style.display = "none";
+        formStep2.style.display = "block";
+      };
+
+      formStep2.onsubmit = async (e) => {
+        e.preventDefault();
+
+        const data = {
+          name: studentName,
+          class: studentClass,
+          tamil: parseInt(document.getElementById("tamil").value),
+          english: parseInt(document.getElementById("english").value),
+          maths: parseInt(document.getElementById("maths").value),
+          science: parseInt(document.getElementById("science").value),
+          social: parseInt(document.getElementById("social").value),
+        };
+
+        const response = await fetch("http://localhost:4001", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+        output.innerHTML = `
+          Name: ${result.name}<br>
+          Class: ${result.class}<br>
+          Total Marks: ${result.total}<br>
+          Average: ${result.average}<br>
+          Result: <strong>${result.result}</strong>
+        `;
+        formStep2.style.display = "none";
+        resultDiv.style.display = "block";
+      };
+    </script>
+  </body>
+</html>
