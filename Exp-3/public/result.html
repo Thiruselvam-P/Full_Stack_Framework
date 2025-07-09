@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lab Marks & GPA</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #c3cfe2, #f5f7fa);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .form-box {
+        background: white;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      h2 {
+        margin-bottom: 25px;
+        color: #333;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 15px;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #6a11cb;
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 15px;
+      }
+
+      button:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-box">
+      <h2>Enter Lab Marks</h2>
+      <form id="resultForm">
+        <input type="number" name="lab1" placeholder="Lab 1 Mark" required />
+        <input type="number" name="lab2" placeholder="Lab 2 Mark" required />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <script>
+      document
+        .getElementById("resultForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const lab1 = parseInt(document.querySelector('[name="lab1"]').value);
+          const lab2 = parseInt(document.querySelector('[name="lab2"]').value);
+
+          const student = JSON.parse(localStorage.getItem("studentData")) || {};
+          student.labMarks = [lab1, lab2];
+
+          const allMarks = [...student.subjects.map((s) => s.mark), lab1, lab2];
+          const avg = allMarks.reduce((sum, m) => sum + m, 0) / allMarks.length;
+          student.gpa = (avg / 10).toFixed(2);
+          student.cgpa = student.gpa;
+
+          const formData = new FormData();
+          formData.append("data", JSON.stringify(student));
+
+          const imageName = localStorage.getItem("imageName");
+          if (imageName) {
+            const response = await fetch(`/uploads/${imageName}`);
+            const imageBlob = await response.blob();
+            const imageFile = new File([imageBlob], imageName);
+            formData.append("image", imageFile);
+          }
+
+          const res = await fetch("/api/students", {
+            method: "POST",
+            body: formData,
+          });
+
+          const result = await res.json();
+
+          if (res.ok) {
+            alert("✅ Student data submitted successfully!");
+            localStorage.clear();
+            window.location.href = `studentDetails.html?id=${result.student._id}`;
+          } else {
+            alert("❌ Error: " + result.error);
+          }
+        });
+    </script>
+  </body>
+</html>

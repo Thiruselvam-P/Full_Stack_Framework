@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Student Details</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      }
+
+      img {
+        display: block;
+        margin: 0 auto 20px;
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      ul {
+        padding-left: 20px;
+      }
+
+      p {
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Student Details</h2>
+      <img id="photo" src="" alt="Student Photo" />
+      <p><strong>Name:</strong> <span id="name"></span></p>
+      <p><strong>Dept:</strong> <span id="dept"></span></p>
+      <p><strong>GPA:</strong> <span id="gpa"></span></p>
+      <p><strong>CGPA:</strong> <span id="cgpa"></span></p>
+      <p><strong>Subjects:</strong></p>
+      <ul id="subjectList"></ul>
+      <p><strong>Lab Marks:</strong></p>
+      <ul id="labList"></ul>
+    </div>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+
+      if (!id) {
+        alert("No student ID provided in URL.");
+      } else {
+        fetch(`/api/students/${id}`)
+          .then((res) => res.json())
+          .then((data) => {
+            document.getElementById("name").textContent = data.name;
+            document.getElementById("dept").textContent = data.dept;
+            document.getElementById("gpa").textContent = data.gpa;
+            document.getElementById("cgpa").textContent = data.cgpa;
+
+            document.getElementById("photo").src = `/uploads/${data.image}`;
+
+            const subList = document.getElementById("subjectList");
+            data.subjects?.forEach((sub) => {
+              const li = document.createElement("li");
+              li.textContent = sub;
+              subList.appendChild(li);
+            });
+
+            const labList = document.getElementById("labList");
+            data.labMarks?.forEach((mark) => {
+              const li = document.createElement("li");
+              li.textContent = mark;
+              labList.appendChild(li);
+            });
+          })
+          .catch((err) => {
+            alert("Failed to fetch student details");
+            console.error(err);
+          });
+      }
+    </script>
+  </body>
+</html>

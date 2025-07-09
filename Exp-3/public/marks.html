@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enter Subject Marks</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #f5f6fa;
+      }
+      .page-center {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .form-box {
+        background: #fff;
+        padding: 30px 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+      h2 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+      form input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+      form button {
+        width: 100%;
+        padding: 12px;
+        background-color: #007bff;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      form button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-center">
+      <div class="form-box">
+        <h2>Enter Subject Marks</h2>
+        <form id="marksForm">
+          <input
+            type="text"
+            name="sub1"
+            placeholder="Subject 1 - Mark"
+            required
+          />
+          <input
+            type="text"
+            name="sub2"
+            placeholder="Subject 2 - Mark"
+            required
+          />
+          <input
+            type="text"
+            name="sub3"
+            placeholder="Subject 3 - Mark"
+            required
+          />
+          <button type="submit">Next</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("marksForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          const student = JSON.parse(localStorage.getItem("studentData")) || {};
+          student.subjects = [
+            { name: "Subject 1", mark: parseInt(e.target.sub1.value) },
+            { name: "Subject 2", mark: parseInt(e.target.sub2.value) },
+            { name: "Subject 3", mark: parseInt(e.target.sub3.value) },
+          ];
+          localStorage.setItem("studentData", JSON.stringify(student));
+          window.location.href = "result.html";
+        });
+    </script>
+  </body>
+</html>
